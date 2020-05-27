@@ -1,121 +1,187 @@
-// Daniel Shiffman
-// https://thecodingtrain.com/CodingChallenges/149-tic-tac-toe.html
-// https://youtu.be/GTWrWM1UsnA
-// https://editor.p5js.org/codingtrain/sketches/5JngATm3c
+//IDDS Summer 2020 Research
+//Tic tac toe game for AI/ML
+//Jamie O'Sullivan & Mickey Barron 2020-05-26
 
-let board = [
-  ['', '', ''],
-  ['', '', ''],
-  ['', '', ''],
-];
+var devMode = true;
+var board = [];
+var players = ['X', 'O'];
+var currentPlayer = null;
+var availableCells = [];
+var gridSize = 3;
+var canvasWidth = 500;
+var canvasHeight = canvasWidth;
+var columnWidth = canvasWidth / gridSize;
+var rowHeight = canvasHeight / gridSize;
+var winStatus = '';
+var player;
 
-let players = ['X', 'O'];
-
-let currentPlayer;
-let available = [];
-
-function setup() {
-  createCanvas(400, 400);
-  frameRate(30);
-  currentPlayer = floor(random(players.length));
-  for (let j = 0; j < 3; j++) {
-    for (let i = 0; i < 3; i++) {
-      available.push([i, j]);
+function generateBoard(){
+    for (let i = 0; i < gridSize; i++){
+        let templateRow = [];
+        for (let j = 0; j < gridSize; j++){
+            templateRow.push('');
+        }
+        board.push(templateRow);
     }
-  }
+    for (let j = 0; j < gridSize; j++){
+        for (let i = 0; i < gridSize; i++){
+            availableCells.push([i,j]);
+        }
+    }
 }
 
-function equals3(a, b, c) {
-  return (a == b && b == c && a != '');
-}
-
-function checkWinner() {
-  let winner = null;
-
-  // horizontal
-  for (let i = 0; i < 3; i++) {
-    if (equals3(board[i][0], board[i][1], board[i][2])) {
-      winner = board[i][0];
-    }
-  }
-
-  // Vertical
-  for (let i = 0; i < 3; i++) {
-    if (equals3(board[0][i], board[1][i], board[2][i])) {
-      winner = board[0][i];
-    }
-  }
-
-  // Diagonal
-  if (equals3(board[0][0], board[1][1], board[2][2])) {
-    winner = board[0][0];
-  }
-  if (equals3(board[2][0], board[1][1], board[0][2])) {
-    winner = board[2][0];
-  }
-
-  if (winner == null && available.length == 0) {
-    return 'tie';
-  } else {
-    return winner;
-  }
-
-}
-
-function nextTurn() {
-  let index = floor(random(available.length));
-  let spot = available.splice(index, 1)[0];
-  let i = spot[0];
-  let j = spot[1];
-  board[i][j] = players[currentPlayer];
-  currentPlayer = (currentPlayer + 1) % players.length;
-}
-
-// function mousePressed() {
-//   nextTurn(); 
-// }
-
-function draw() {
-  background(255);
-  let w = width / 3;
-  let h = height / 3;
-  strokeWeight(4);
-
-  line(w, 0, w, height);
-  line(w * 2, 0, w * 2, height);
-  line(0, h, width, h);
-  line(0, h * 2, width, h * 2);
-
-  for (let j = 0; j < 3; j++) {
-    for (let i = 0; i < 3; i++) {
-      let x = w * i + w / 2;
-      let y = h * j + h / 2;
-      let spot = board[i][j];
-      textSize(32);
-      if (spot == players[1]) {
-        noFill();
-        ellipse(x, y, w / 2);
-      } else if (spot == players[0]) {
-        let xr = w / 4;
-        line(x - xr, y - xr, x + xr, y + xr);
-        line(x + xr, y - xr, x - xr, y + xr);
-      }
-
-    }
-  }
-
-  let result = checkWinner();
-  if (result != null) {
-    noLoop();
-    let resultP = createP('');
-    resultP.style('font-size', '32pt');
-    if (result == 'tie') {
-      resultP.html("Tie!")
+function checkWin(direction){
+    let pathResult;
+    let headerCell;
+    let comparisonCell;
+    if (direction == "diagonal"){
+        for (let i = -1; i <= 1; i = i + 2){
+            let yCoord = (((gridSize-1)/2)*(1+i));
+            headerCell = board[yCoord][0];
+            if (headerCell != ""){
+                pathResult = true;
+                for (let j = 1; j < gridSize; j++){
+                    let compY = yCoord + j*-i;
+                    comparisonCell = board[compY][j];
+                    if (comparisonCell != headerCell){
+                        pathResult = false;
+                    }
+                }
+                if (pathResult == true){return headerCell;}
+            }
+        }
     } else {
-      resultP.html(`${result} wins!`);
+        for(let i = 0; i < gridSize; i++){
+            if (direction == "vertical"){
+                headerCell = board[0][i];
+            } else if (direction == "horizontal"){
+                headerCell = board[i][0];
+            }
+            if (headerCell != ""){
+                pathResult = true;
+                for(let j = 1; j < gridSize; j++){
+                    if (direction == "vertical"){
+                        comparisonCell = board[j][i];
+                    } else if (direction == "horizontal"){
+                        comparisonCell = board[i][j];
+                    }
+                    if (comparisonCell != headerCell){pathResult = false;}
+                }
+                if (pathResult == true){return headerCell;}
+                
+            }  
+        }
     }
-  } else {
-    nextTurn();
-  }
+   return false;
+}
+
+
+function checkWins(){
+    let winResult = ('').concat(checkWin("horizontal"), checkWin("vertical"), checkWin("diagonal")).replace(/false/g,'');
+    return winResult;
+}
+
+function gameCycle(startingPlayer){
+    
 
 }
+
+function devDisplay(){
+    if (devMode == true){
+        print(board);
+        print(availableCells);
+    }
+}
+
+
+function setup(){
+    createCanvas(canvasWidth, canvasHeight);
+    frameRate(20);
+    generateBoard(gridSize);
+    devDisplay();
+    player = random(players);
+}
+
+function drawGrid(){
+    background(255,255,255);
+    let columnWidth = canvasWidth / gridSize;
+    let rowHeight = canvasHeight / gridSize;
+    strokeWeight(4);
+    for (let i = 0; i < gridSize - 1; i++){
+        let xCoord = columnWidth * (i + 1);
+        line(xCoord, 0, xCoord, canvasHeight);
+    }
+    for (let j = 0; j < gridSize - 1; j++){
+        let yCoord = rowHeight * (j + 1);
+        line(0, yCoord, canvasWidth, yCoord);
+    }
+}
+
+function drawMarks(){
+    for (let i = 0; i < gridSize; i++){
+        for (let j = 0; j < gridSize; j++){
+            if (board[j][i] != ""){
+                var xPos = (columnWidth * i + columnWidth / 2);
+                var yPos =  (rowHeight * j + rowHeight / 2);
+            }
+            if (board[j][i] == players[1]){
+                noFill();
+                ellipse(xPos, yPos, columnWidth / 2, rowHeight / 2);
+
+            } else if (board[j][i] == players[0]){
+                let xLength = columnWidth / 4;
+                let yLength = rowHeight / 4
+                line(xPos - xLength, yPos - yLength, xPos + xLength, yPos + yLength);
+                line(xPos + xLength, yPos - yLength, xPos - xLength, yPos + yLength);
+            }
+        }
+    }
+}
+
+function gameCycle(){
+    let status;
+    if (winStatus != ''){
+        fill("red");
+        textSize(50);
+        textAlign(CENTER);
+        text(winStatus, (canvasWidth / 2), (canvasHeight / 2));
+        status = "winner";
+    } else {
+        let cell;
+        let initValue;
+        do{
+            alert((player + "'s Turn"));
+            let xCoord = prompt("x Coord");
+            let yCoord = prompt("y Coord");
+            cell = [xCoord, yCoord];
+            initValue = board[cell[1]][cell[0]];
+            if (initValue == ''){
+                board[cell[1]][cell[0]] = player;
+                status = "move accepted"
+            } else {
+                alert("Sorry, that space is already taken :(");
+                status = "invalid move";
+            }
+
+        }while(initValue != '');
+        turnResult = checkWins();
+        if (turnResult != ''){
+            winStatus = turnResult + " has won!";
+            textSize(48);
+            fill("red");
+            textAlign(CENTER);
+            text(winStatus, (canvasWidth/2), (canvasHeight/2));
+            noLoop();    
+        }
+        if (player == "X"){player = "O"} else {player = "X"};
+    }
+    return status;
+}
+
+
+function draw(){
+    drawGrid();
+    gameCycle();
+    drawMarks();
+}
+
