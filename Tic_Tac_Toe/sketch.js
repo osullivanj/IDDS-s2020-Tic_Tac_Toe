@@ -2,6 +2,17 @@
 //Tic tac toe game for AI/ML
 //Jamie O'Sullivan & Mickey Barron 2020-05-26
 
+function compareArrays(arr1, arr2) {
+  if (arr1 === arr2) return true;
+  if (arr1 == null || arr2 == null) return false;
+  if (arr1.length != arr2.length) return false;
+
+  for (let i = 0; i < arr1.length; ++i) {
+    if (arr1[i] !== arr2[i]) return false;
+  }
+  return true;
+}
+
 var devMode = true;
 var board = [];
 var players = ["X", "O"];
@@ -157,7 +168,10 @@ function pushText(message) {
 function gameCycle(xCoord, yCoord) {
   if (board[yCoord][xCoord] == "") {
     board[yCoord][xCoord] = player;
-    availableCells.splice(availableCells.indexOf([xCoord, yCoord]), 1);
+    availableCells = availableCells.filter(function(cell){
+      return !(compareArrays(cell,[xCoord,yCoord]));
+    });
+    print(availableCells);
   } else {
       print(`An unacceptable move was made at ( ${xCoord}, ${yCoord} )`);
       return;
