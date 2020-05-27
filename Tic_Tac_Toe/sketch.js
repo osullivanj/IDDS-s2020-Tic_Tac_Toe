@@ -181,8 +181,7 @@ function gameCycle(xCoord, yCoord) {
     winStatus = turnResult + " has won!";
     pushText(winStatus);
     noLoop();
-  }
-  if (availableCells.length == 0) {
+  } else if (availableCells.length == 0) {
     pushText("Tie!");
     noLoop();
   }
