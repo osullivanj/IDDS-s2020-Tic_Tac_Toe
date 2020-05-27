@@ -81,18 +81,12 @@ function checkWins(){
     return winResult;
 }
 
-function gameCycle(startingPlayer){
-    
-
-}
-
 function devDisplay(){
     if (devMode == true){
         print(board);
         print(availableCells);
     }
 }
-
 
 function setup(){
     createCanvas(canvasWidth, canvasHeight);
