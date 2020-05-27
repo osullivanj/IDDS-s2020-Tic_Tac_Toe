@@ -51,7 +51,7 @@ function checkWin(direction){
             }
         }
     } else {
-        for(let i = 0; i < gridSize; i++){
+        for (let i = 0; i < gridSize; i++){
             if (direction == "vertical"){
                 headerCell = board[0][i];
             } else if (direction == "horizontal"){
@@ -59,7 +59,7 @@ function checkWin(direction){
             }
             if (headerCell != ""){
                 pathResult = true;
-                for(let j = 1; j < gridSize; j++){
+                for (let j = 1; j < gridSize; j++){
                     if (direction == "vertical"){
                         comparisonCell = board[j][i];
                     } else if (direction == "horizontal"){
@@ -138,44 +138,40 @@ function drawMarks(){
     }
 }
 
-function gameCycle(){
-    let status;
-    if (winStatus != ''){
+function pushText(message){
+    textSize(48);
         fill("red");
-        textSize(50);
         textAlign(CENTER);
-        text(winStatus, (canvasWidth / 2), (canvasHeight / 2));
-        status = "winner";
-    } else {
-        let cell;
-        let initValue;
-        do{
-            alert((player + "'s Turn"));
-            let xCoord = prompt("x Coord");
-            let yCoord = prompt("y Coord");
-            cell = [xCoord, yCoord];
-            initValue = board[cell[1]][cell[0]];
-            if (initValue == ''){
-                board[cell[1]][cell[0]] = player;
-                status = "move accepted"
-            } else {
-                alert("Sorry, that space is already taken :(");
-                status = "invalid move";
-            }
+        text(message, (canvasWidth/2), (canvasHeight/2));
+}
 
-        }while(initValue != '');
-        turnResult = checkWins();
-        if (turnResult != ''){
-            winStatus = turnResult + " has won!";
-            textSize(48);
-            fill("red");
-            textAlign(CENTER);
-            text(winStatus, (canvasWidth/2), (canvasHeight/2));
-            noLoop();    
+function gameCycle(){
+    let cell;
+    let initValue;
+    do {
+        alert((player + "'s Turn"));
+        let xCoord = prompt("x Coord");
+        let yCoord = prompt("y Coord");
+        cell = [xCoord, yCoord];
+        initValue = board[cell[1]][cell[0]];
+        if (initValue == ''){
+            board[cell[1]][cell[0]] = player;
+            availableCells.splice(availableCells.indexOf(cell), 1);
+        } else {
+            alert("Sorry, that space is already taken :(");
         }
-        if (player == "X"){player = "O"} else {player = "X"};
+    } while (initValue != '');
+    turnResult = checkWins();
+    if (turnResult != ''){
+        winStatus = turnResult + " has won!";
+        pushText(winStatus);
+        noLoop();    
     }
-    return status;
+    if (availableCells.length == 0){
+        pushText("Tie!");
+        noLoop();
+    }
+    if (player == "X"){player = "O"} else {player = "X"};
 }
 
 
