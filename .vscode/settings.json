@@ -1,5 +1,9 @@
 {
     "editor.tabSize": 2,
-    "editor.defaultFormatter": "bysabi.prettier-vscode-semistandard",
-    "prettier.singleQuote": true
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "prettier.singleQuote": true,
+    "prettier.printWidth": 120,
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
 }
