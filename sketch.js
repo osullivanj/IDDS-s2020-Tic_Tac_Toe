@@ -1,42 +1,66 @@
-//IDDS Summer 2020 Research
-//Tic tac toe game for AI/ML
-//Jamie O'Sullivan & Mickey Barron 2020-05-26
+/*
+ * Tic tac toe game for AI/ML
+ *
+ * by Jamie O'Sullivan & Mickey Barron Summer 2020
+ *
+ * Based On:
+ *
+ * Daniel Shiffman
+ * https://thecodingtrain.com/CodingChallenges/149-tic-tac-toe.html
+ * https://youtu.be/GTWrWM1UsnA
+ * https://editor.p5js.org/codingtrain/sketches/5JngATm3c
+ *
+ *           INSTRUCTIONS
+ *
+ * - Write your AI in the ai.js file
+ * - Don't edit this file.
+ * - You may refer to this file to see how the game wssorks,
+ *    but you don't have to worry about it.
+ * - The AI takes one turn at a time.
+ * - The AI is invoked when the game calls the aiSelect() function.
+ * - The aiSelect() function returns the number of which cell to mark, 0-8:
+ *
+ *     0 | 1 | 2
+ *    -----------
+ *     3 | 4 | 5
+ *    -----------
+ *     6 | 7 | 8
+ *
+ * - The AI may NOT edit the game state in any way.
+ * - The AI MUST return 0-8 from aiSelect (that is the only way to play the
+ * game)
+ * - The AI may look at the game state variables: board, gridSize, etc, but not
+ * change them.
+ *
+ * - The game is 2-dimensional, but the board is stored a 1-dimensional array,
+ * using the cell numbers above.
+ * - If you want to think about the board as 2D, we provided a function board2d
+ * to provide a 2d interface to it.
+ * - Each cell of the board is either 'X', 'O', or '', where empty string means
+ * the cell is empty.
+ */
 
-function compareArrays(arr1, arr2) {
-  if (arr1 === arr2) return true;
-  if (arr1 == null || arr2 == null) return false;
-  if (arr1.length != arr2.length) return false;
-
-  for (let i = 0; i < arr1.length; ++i) {
-    if (arr1[i] !== arr2[i]) return false;
-  }
-  return true;
-}
-
-var devMode = true;
 var board = [];
-var players = ["X", "O"];
-var currentPlayer = null;
-var availableCells = [];
+var players = ['X', 'O'];
 var gridSize = 3;
 var canvasWidth = 500;
 var canvasHeight = canvasWidth;
 var columnWidth = canvasWidth / gridSize;
 var rowHeight = canvasHeight / gridSize;
-var winStatus = "";
+var winStatus = '';
 var player;
+
+// Whenever the Spacebar is pressed, the AI takes a turn
+function keyPressed() {
+  if (keyCode === 32) {
+    gameCycle(aiSelect());
+  }
+}
 
 function generateBoard() {
   for (let i = 0; i < gridSize; i++) {
-    let templateRow = [];
     for (let j = 0; j < gridSize; j++) {
-      templateRow.push("");
-    }
-    board.push(templateRow);
-  }
-  for (let j = 0; j < gridSize; j++) {
-    for (let i = 0; i < gridSize; i++) {
-      availableCells.push([i, j]);
+      board.push('');
     }
   }
 }
@@ -45,82 +69,79 @@ function checkWin(direction) {
   let pathResult;
   let headerCell;
   let comparisonCell;
-  if (direction == "diagonal") {
+  if (direction === 'diagonal') {
     for (let i = -1; i <= 1; i = i + 2) {
-      let yCoord = (gridSize - 1) / 2 * (1 + i);
-      headerCell = board[yCoord][0];
-      if (headerCell != "") {
+      const yCoord = (gridSize - 1) / 2 * (1 + i);
+      headerCell = board2d(yCoord, 0);
+      if (headerCell !== '') {
         pathResult = true;
         for (let j = 1; j < gridSize; j++) {
-          let compY = yCoord + j * -i;
-          comparisonCell = board[compY][j];
-          if (comparisonCell != headerCell) {
+          const compY = yCoord + j * -i;
+          comparisonCell = board2d(compY, j);
+          if (comparisonCell !== headerCell) {
             pathResult = false;
           }
         }
-        if (pathResult == true) {
+        if (pathResult === true) {
           return headerCell;
         }
       }
     }
   } else {
     for (let i = 0; i < gridSize; i++) {
-      if (direction == "vertical") {
-        headerCell = board[0][i];
-      } else if (direction == "horizontal") {
-        headerCell = board[i][0];
+      if (direction === 'vertical') {
+        headerCell = board2d(0, i);
+      } else if (direction === 'horizontal') {
+        headerCell = board2d(i, 0);
       }
-      if (headerCell != "") {
+      if (headerCell !== '') {
         pathResult = true;
         for (let j = 1; j < gridSize; j++) {
-          if (direction == "vertical") {
-            comparisonCell = board[j][i];
-          } else if (direction == "horizontal") {
-            comparisonCell = board[i][j];
+          if (direction === 'vertical') {
+            comparisonCell = board2d(j, i);
+          } else if (direction === 'horizontal') {
+            comparisonCell = board2d(i, j);
           }
-          if (comparisonCell != headerCell) {
+          if (comparisonCell !== headerCell) {
             pathResult = false;
           }
         }
-        if (pathResult == true) {
+        if (pathResult === true) {
           return headerCell;
         }
       }
     }
   }
-  return "";
+  return '';
 }
 
-// returns a string representing the winner, or an empty string if nobody has won
+// returns a string representing the winner, or an empty string if nobody has
+// won
 function checkWins() {
-  winResults = [checkWin("horizontal"), checkWin("vertical"), checkWin("diagonal")];
+  const winResults = [
+    checkWin('horizontal'),
+    checkWin('vertical'),
+    checkWin('diagonal')
+  ];
 
-  let reducer = function (total, num) {
-    if( num === '' && total === '') {
-        return '';
+  const reducer = function(total, num) {
+    if (num === '' && total === '') {
+      return '';
     } else if (total === '') {
-        return num;
+      return num;
     } else {
-        return total;
+      return total;
     }
-  }
+  };
 
   return winResults.reduce(reducer);
 }
 
-function devDisplay() {
-  if (devMode == true) {
-    print(board);
-    print(availableCells);
-  }
-}
-
 function setup() {
   createCanvas(canvasWidth, canvasHeight);
-  frameRate(20);
   generateBoard(gridSize);
-  devDisplay();
-  player = random(players);
+  player = players[0];
+  noLoop(); // noLoop should be the last line in the block
 }
 
 function drawGrid() {
@@ -129,11 +150,11 @@ function drawGrid() {
   let rowHeight = canvasHeight / gridSize;
   strokeWeight(4);
   for (let i = 0; i < gridSize - 1; i++) {
-    let xCoord = columnWidth * (i + 1);
+    const xCoord = columnWidth * (i + 1);
     line(xCoord, 0, xCoord, canvasHeight);
   }
   for (let j = 0; j < gridSize - 1; j++) {
-    let yCoord = rowHeight * (j + 1);
+    const yCoord = rowHeight * (j + 1);
     line(0, yCoord, canvasWidth, yCoord);
   }
 }
@@ -141,16 +162,16 @@ function drawGrid() {
 function drawMarks() {
   for (let i = 0; i < gridSize; i++) {
     for (let j = 0; j < gridSize; j++) {
-      if (board[j][i] != "") {
+      if (board2d(j, i) !== '') {
         var xPos = columnWidth * i + columnWidth / 2;
         var yPos = rowHeight * j + rowHeight / 2;
       }
-      if (board[j][i] == players[1]) {
+      if (board2d(j, i) === players[1]) {
         noFill();
         ellipse(xPos, yPos, columnWidth / 2, rowHeight / 2);
-      } else if (board[j][i] == players[0]) {
-        let xLength = columnWidth / 4;
-        let yLength = rowHeight / 4;
+      } else if (board2d(j, i) === players[0]) {
+        const xLength = columnWidth / 4;
+        const yLength = rowHeight / 4;
         line(xPos - xLength, yPos - yLength, xPos + xLength, yPos + yLength);
         line(xPos + xLength, yPos - yLength, xPos - xLength, yPos + yLength);
       }
@@ -160,61 +181,97 @@ function drawMarks() {
 
 function pushText(message) {
   textSize(48);
-  fill("red");
+  fill('red');
+  stroke('white');
   textAlign(CENTER);
-  text(message, canvasWidth / 2, canvasHeight / 2);
+  if (message !== '') {
+    text(message, canvasWidth / 2, canvasHeight / 2);
+    print(message);
+  }
 }
 
-function gameCycle(xCoord, yCoord) {
-  if (board[yCoord][xCoord] == "") {
-    board[yCoord][xCoord] = player;
-    availableCells = availableCells.filter(function(cell){
-      return !(compareArrays(cell,[xCoord,yCoord]));
-    });
-    print(availableCells);
+function gameCycle(cell) {
+  let outputText = '';
+  if (board[cell] === '') {
+    board[cell] = player;
   } else {
-      print(`An unacceptable move was made at ( ${xCoord}, ${yCoord} )`);
-      return;
+    outputText = `Cell ${cell} is already taken!`;
+    return;
   }
-  turnResult = checkWins();
-  if (turnResult != "") {
-    winStatus = turnResult + " has won!";
-    pushText(winStatus);
-    noLoop();
-  } else if (availableCells.length == 0) {
-    pushText("Tie!");
-    noLoop();
+  const turnResult = checkWins();
+  if (turnResult !== '') {
+    winStatus = turnResult + ' has won!';
+    outputText = winStatus;
+  } else if (emptyCells(board).length === 0) {
+    outputText = 'Tie!';
   }
-  if (player == "X") {
-    player = "O";
+  if (player === 'X') {
+    player = 'O';
   } else {
-    player = "X";
+    player = 'X';
   }
+  redraw();
+  pushText(outputText);
 }
 
 function draw() {
   drawGrid();
-  if (keyIsPressed) {
-    if (key == " ") {
-      let aiSelected = aiSelect();
-      gameCycle(aiSelected[0], aiSelected[1]);
-    }
-  }
   drawMarks();
 }
 
-function getBoard() {
-  return board;
+/* Utility Functions  */
+
+// Returns an array of which cells are empty.
+// Examples:
+//  A brand-new game with an empty board would return [0, 1, 2, 3, 4, 5, 6, 7,
+//  8] If the only empty cell is the center, it will return [4] If every cell is
+//  occupied, returns an empty list, []
+function emptyCells(board) {
+  const b = board.map((value, index) => {
+    if (value === '') {
+      return index;
+    } else {
+      return '';
+    }
+  });
+
+  return b.filter(value => value !== '');
 }
 
-function getCurrentPlayer() {
-  return player;
-}
+// 2D interface to the board. Using this, you can think of the board as a 2d
+// array, like this: board[i][j]. takes two or three arguments: i, j, newValue
+// i: row
+// j: column
+// newValue: (optional) If given, will SET the cell to that value.
+// Returns the value of the board at [i][j], after the set if a set was done.
+//
+// Examples:
+//  to get the value at row 2, column 1:
+//      board2d(2, 1)
+//  to set the value at row 2, column 1 to 'X':
+//      board2d(2, 1, 'X')
+//  both return the value of that cell.
+const board2d = function(i, j, newValue) {
+  const iOffset = i * gridSize;
+  if (newValue !== undefined) {
+    board[iOffset + j] = newValue;
+  }
+  return board[iOffset + j];
+};
 
-function getAvailableCells() {
-  return availableCells;
-}
+// Comparing arrays in javascript is not easy.
+// Just in case you need to, here is a "deep" compare function.
+// This function will test if two arrays are identical by looking at every
+// element,
+//  including sub-elements, and will return true only if every single value is
+//  the same.
+function compareArrays(arr1, arr2) {
+  if (arr1 === arr2) return true;
+  if (arr1 == null || arr2 == null) return false;
+  if (arr1.length !== arr2.length) return false;
 
-function getGridSize() {
-  return gridSize;
+  for (let i = 0; i < arr1.length; ++i) {
+    return compareArrays(arr1[i], arr2[i]);
+  }
+  return true;
 }
