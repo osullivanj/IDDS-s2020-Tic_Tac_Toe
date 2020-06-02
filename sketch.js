@@ -226,7 +226,8 @@ function draw() {
 
 /* Utility Functions  */
 
-// Returns an array of which cells are empty.
+// Returns an array of which cells are empty from the given board. 
+// (technically works on *any* array!)
 // Examples:
 //  A brand-new game with an empty board would return [0, 1, 2, 3, 4, 5, 6, 7, 8]
 //  If the only empty cell is the center, it will return [4] If every cell is occupied, returns an empty list, []
@@ -263,6 +264,42 @@ const board2d = function (i, j, newValue) {
   }
   return board[iOffset + j];
 };
+
+// Converts 2d style (row, col) into 1d cell number
+// Given a 3x3 grid, cell2d(1,2) -> 5
+const cell2d = function (row, col) {
+  return row * gridSize + col;
+};
+
+// Slices up the current board state into rows.
+// Returns an array, where each element is a row.
+// A row is also an array.
+function getRows() {
+  let rows = [];
+  for (let row = 0; row < gridSize; row++) {
+    let thisRow = [];
+    for(let col = 0; col < gridSize; col++) {
+      thisRow.push(board2d(row, col));
+    }
+    rows.push(thisRow);
+  }
+  return rows;
+}
+
+// Slices up the current board state into columns.
+// Returns an array, where each element is a column.
+// A column is also an array.
+function getColumns() {
+  let columns = [];
+  for (let col = 0; col < gridSize; col++) {
+    let thisColumn = [];
+    for(let row = 0; row < gridSize; row++) {
+      thisColumn.push(board2d(row, col));
+    }
+    columns.push(thisColumn);
+  }
+  return columns;
+}
 
 // Comparing arrays in javascript is not easy.
 // Just in case you need to, here is a "deep" compare function.
