@@ -305,6 +305,7 @@ function getColumns() {
 // Just in case you need to, here is a "deep" compare function.
 // This function will test if two arrays are identical by looking at every element,
 //  including sub-elements, and will return true only if every single value is the same.
+// This function is recursive- for each element it re-calls itself to compare, so it will work with nested data.
 function compareArrays(arr1, arr2) {
   if (arr1 === arr2) return true;
   if (arr1 == null || arr2 == null) return false;
