@@ -179,6 +179,8 @@ function drawGrid() {
   }
 }
 
+function numberCells() {}
+
 //Generation of Xs and Os in the grid
 function drawMarks() {
   for (let i = 0; i < gridSize; i++) {
@@ -245,7 +247,7 @@ function draw() {
 
 /* Utility Functions  */
 
-// Returns an array of which cells are empty from the given board. 
+// Returns an array of which cells are empty from the given board.
 // (technically works on *any* array!)
 // Examples:
 //  A brand-new game with an empty board would return [0, 1, 2, 3, 4, 5, 6, 7, 8]
@@ -297,7 +299,7 @@ function getRows() {
   let rows = [];
   for (let row = 0; row < gridSize; row++) {
     let thisRow = [];
-    for(let col = 0; col < gridSize; col++) {
+    for (let col = 0; col < gridSize; col++) {
       thisRow.push(board2d(row, col));
     }
     rows.push(thisRow);
@@ -312,7 +314,7 @@ function getColumns() {
   let columns = [];
   for (let col = 0; col < gridSize; col++) {
     let thisColumn = [];
-    for(let row = 0; row < gridSize; row++) {
+    for (let row = 0; row < gridSize; row++) {
       thisColumn.push(board2d(row, col));
     }
     columns.push(thisColumn);
