@@ -67,6 +67,7 @@ const canvasHeight = canvasWidth;
 const columnWidth = canvasWidth / gridSize;
 const rowHeight = canvasHeight / gridSize;
 var player;
+var showNumbers = true;
 
 // Whenever the Spacebar is pressed, the AI takes a turn
 function keyPressed() {
