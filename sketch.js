@@ -179,7 +179,23 @@ function drawGrid() {
   }
 }
 
-function numberCells() {}
+function numberCells() {
+  for (let i = 0; i < gridSize; i++) {
+    for (let j = 0; j < gridSize; j++) {
+      Text("1", columnWidth / 2, rowHeight / 2);
+      Text("2", columnWidth + 0.5, rowHeight / 2);
+      Text("3", columnWidth + 1.5, rowHeight / 2);
+      Text("4", columnWidth / 2, rowHeight + 0.5);
+      Text("5", columnWidth + 0.5, rowHeight + 0.5);
+      Text("6", columnWidth + 1.5, rowHeight + 0.5);
+      Text("7", columnWidth / 2, rowHeight + 1.5);
+      Text("8", columnWidth + 0.5, rowHeight + 1.5);
+      Text("9", columnWidth + 1.5, rowHeight + 1.5);
+      textSize(12);
+      fill('red');
+    }
+  }
+}
 
 //Generation of Xs and Os in the grid
 function drawMarks() {
